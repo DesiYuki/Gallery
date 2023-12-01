@@ -1,4 +1,5 @@
 ﻿using DevExpress.Utils.Behaviors.Common;
+using DevExpress.XtraBars.Ribbon;
 using DevExpress.XtraEditors;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,11 @@ namespace Gallery.Forms
     public partial class f_main : XtraForm
     {
         #region Vars
+
         List<string> imgFiles = new List<string>();
         static int imgShow = -1;
         static int I;
+
         #endregion
 
         public f_main()
@@ -38,6 +41,7 @@ namespace Gallery.Forms
             
             label1.Text = "0/" + imgFiles.Count;
             progressBarControl1.Properties.Maximum = imgFiles.Count;
+            
             LoadImagesAsync();
         }
 
@@ -45,26 +49,28 @@ namespace Gallery.Forms
         {
             I = 0;
             imgFiles.Clear();
-            flowLayoutPanel1.Controls.Clear();
+            galleryControl1.Gallery.Groups[0].Items.Clear();
+        }
+
+        private void Gallery_ItemClick(object sender, GalleryItemClickEventArgs e)
+        {
+            imgShow = (int)(sender as GalleryItem).Tag;
+            pbView.Image = GetCopyImage(imgFiles[imgShow]);
+            pbView.Visible = true;
         }
 
         private async Task LoadImagesAsync()
         {
             while (I < imgFiles.Count)
             {
-                //if (I > 100)
-                //    break;
-                PictureBox pb = new PictureBox();
-                pb.Image = await Task.Run(() => ResizeImage(imgFiles[I]));
-                pb.SizeMode = PictureBoxSizeMode.Zoom;
-                pb.Width = 100;
-                pb.Height = 100;
-                pb.Tag = I;
-                pb.MouseClick += PBMouseClick;
+                GalleryItem galleryItem = new GalleryItem();
+                galleryItem.Tag = I;
+                galleryItem.ItemClick += Gallery_ItemClick;
+                galleryItem.ImageOptions.Image = await Task.Run(() => ResizeImage(imgFiles[I]));
 
-                flowLayoutPanel1.Invoke((MethodInvoker)delegate
-                {
-                    flowLayoutPanel1.Controls.Add(pb);
+                galleryControl1.Invoke((MethodInvoker)delegate
+                { 
+                    galleryControl1.Gallery.Groups[0].Items.Add(galleryItem); 
                 });
 
                 progressBarControl1.Position = I;
@@ -94,18 +100,11 @@ namespace Gallery.Forms
 
         private Image ResizeImage(string path)
         {
-            try
+            using (Image im = Image.FromFile(path))
             {
-                using (Image im = Image.FromFile(path))
-                {
-                    int minSize = 150;
-                    Image resizedImage = im.GetThumbnailImage(minSize, (minSize * im.Height) / im.Width, null, IntPtr.Zero);
-                    return resizedImage;
-                }
-            }
-            catch (Exception)
-            {
-                return null;
+                int minSize = 100;
+                Image resizedImage = im.GetThumbnailImage(minSize, (minSize * im.Height) / im.Width, null, IntPtr.Zero);
+                return resizedImage;
             }
         }
 
@@ -143,27 +142,7 @@ namespace Gallery.Forms
 
         private void f_main_KeyDown(object sender, KeyEventArgs e)
         {
-            if (pbView.Visible)
-            {
-                if (e.KeyCode == Keys.Left)
-                {
-                    if (imgShow - 1 != -1)
-                    {
-                        int tagimg = (int)flowLayoutPanel1.Controls[imgShow - 1].Tag;                    
-                        pbView.Image = GetCopyImage(imgFiles[tagimg]);
-                        imgShow = tagimg;
-                    }
-                }
-                if (e.KeyCode == Keys.Right)
-                {
-                    if ((imgShow + 1) < flowLayoutPanel1.Controls.Count)
-                    {
-                        int tagimg = (int)flowLayoutPanel1.Controls[imgShow + 1].Tag;
-                        pbView.Image = GetCopyImage(imgFiles[tagimg]);
-                        imgShow = tagimg;
-                    }
-                }
-            }
+
         }
     }
 }

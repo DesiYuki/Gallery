@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            DevExpress.XtraBars.Ribbon.GalleryItemGroup galleryItemGroup1 = new DevExpress.XtraBars.Ribbon.GalleryItemGroup();
             this.p_loading = new DevExpress.XtraEditors.PanelControl();
             this.progressBarControl1 = new DevExpress.XtraEditors.ProgressBarControl();
             this.label1 = new System.Windows.Forms.Label();
@@ -37,27 +37,22 @@
             this.barManager1 = new DevExpress.XtraBars.BarManager(this.components);
             this.bar2 = new DevExpress.XtraBars.Bar();
             this.b_addPath = new DevExpress.XtraBars.BarButtonItem();
+            this.b_clear = new DevExpress.XtraBars.BarButtonItem();
             this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.b_clear = new DevExpress.XtraBars.BarButtonItem();
+            this.galleryControl1 = new DevExpress.XtraBars.Ribbon.GalleryControl();
+            this.galleryControlClient1 = new DevExpress.XtraBars.Ribbon.GalleryControlClient();
             ((System.ComponentModel.ISupportInitialize)(this.p_loading)).BeginInit();
             this.p_loading.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.progressBarControl1.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.galleryControl1)).BeginInit();
+            this.galleryControl1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 59);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(800, 391);
-            this.flowLayoutPanel1.TabIndex = 0;
             // 
             // p_loading
             // 
@@ -136,6 +131,13 @@
             this.b_addPath.Name = "b_addPath";
             this.b_addPath.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.b_addPath_ItemClick);
             // 
+            // b_clear
+            // 
+            this.b_clear.Caption = "Clera";
+            this.b_clear.Id = 1;
+            this.b_clear.Name = "b_clear";
+            this.b_clear.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.b_clear_ItemClick);
+            // 
             // barDockControlTop
             // 
             this.barDockControlTop.CausesValidation = false;
@@ -168,12 +170,29 @@
             this.barDockControlRight.Manager = this.barManager1;
             this.barDockControlRight.Size = new System.Drawing.Size(0, 430);
             // 
-            // b_clear
+            // galleryControl1
             // 
-            this.b_clear.Caption = "Clera";
-            this.b_clear.Id = 1;
-            this.b_clear.Name = "b_clear";
-            this.b_clear.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.b_clear_ItemClick);
+            this.galleryControl1.Controls.Add(this.galleryControlClient1);
+            this.galleryControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            // 
+            // 
+            // 
+            galleryItemGroup1.Caption = "Group1";
+            this.galleryControl1.Gallery.Groups.AddRange(new DevExpress.XtraBars.Ribbon.GalleryItemGroup[] {
+            galleryItemGroup1});
+            this.galleryControl1.Gallery.ImageSize = new System.Drawing.Size(100, 100);
+            this.galleryControl1.Gallery.ItemImageLayout = DevExpress.Utils.Drawing.ImageLayoutMode.ZoomInside;
+            this.galleryControl1.Location = new System.Drawing.Point(0, 59);
+            this.galleryControl1.Name = "galleryControl1";
+            this.galleryControl1.Size = new System.Drawing.Size(800, 391);
+            this.galleryControl1.TabIndex = 6;
+            this.galleryControl1.Text = "galleryControl1";
+            // 
+            // galleryControlClient1
+            // 
+            this.galleryControlClient1.GalleryControl = this.galleryControl1;
+            this.galleryControlClient1.Location = new System.Drawing.Point(2, 2);
+            this.galleryControlClient1.Size = new System.Drawing.Size(779, 387);
             // 
             // f_main
             // 
@@ -181,7 +200,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.pbView);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.galleryControl1);
             this.Controls.Add(this.p_loading);
             this.Controls.Add(this.barDockControlLeft);
             this.Controls.Add(this.barDockControlRight);
@@ -196,14 +215,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.progressBarControl1.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.galleryControl1)).EndInit();
+            this.galleryControl1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private DevExpress.XtraEditors.PanelControl p_loading;
         private DevExpress.XtraEditors.ProgressBarControl progressBarControl1;
         private System.Windows.Forms.Label label1;
@@ -217,5 +236,7 @@
         private DevExpress.XtraBars.BarDockControl barDockControlRight;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private DevExpress.XtraBars.BarButtonItem b_clear;
+        private DevExpress.XtraBars.Ribbon.GalleryControl galleryControl1;
+        private DevExpress.XtraBars.Ribbon.GalleryControlClient galleryControlClient1;
     }
 }
