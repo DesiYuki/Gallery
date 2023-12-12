@@ -1,4 +1,6 @@
-﻿using Gallery.Forms;
+﻿using Gallery.Classes;
+using Gallery.Forms;
+using Gallery.Models;
 using System;
 using System.Windows.Forms;
 
