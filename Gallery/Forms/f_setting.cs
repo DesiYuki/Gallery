@@ -25,7 +25,7 @@ namespace Gallery.Forms
 
         void loadSetting()
         {
-            foreach (SearchFolders sf in Global.DBControl.selectAll_SearchFolders())
+            foreach (SearchFolders sf in Global.DBControl.SelectAll_SearchFolders())
                 tl_path.Nodes.Add(sf.Id, sf.Path);
             b_delPath.Enabled = tl_path.Nodes.Count > 0;
         }

@@ -1,6 +1,6 @@
 ﻿namespace Gallery.Forms
 {
-    partial class f_main
+    partial class F_main
     {
         /// <summary>
         /// Required designer variable.
@@ -36,16 +36,16 @@
             this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
-            this.galleryControl1 = new DevExpress.XtraBars.Ribbon.GalleryControl();
+            this.GalleryControlDX = new DevExpress.XtraBars.Ribbon.GalleryControl();
             this.galleryControlClient1 = new DevExpress.XtraBars.Ribbon.GalleryControlClient();
             this.p_bot = new DevExpress.XtraEditors.PanelControl();
             this.l_count = new System.Windows.Forms.Label();
             this.progressBarLoad = new DevExpress.XtraEditors.ProgressBarControl();
             this.defaultBarAndDockingController1 = new DevExpress.XtraBars.DefaultBarAndDockingController(this.components);
-            this.ZoomPicturBox1 = new Gallery.CustomComponents.yZoomPicturBox();
+            this.ZoomPictureBox1 = new Gallery.CustomComponents.yZoomPicturBox();
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.galleryControl1)).BeginInit();
-            this.galleryControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GalleryControlDX)).BeginInit();
+            this.GalleryControlDX.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.p_bot)).BeginInit();
             this.p_bot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.progressBarLoad.Properties)).BeginInit();
@@ -64,7 +64,7 @@
             this.barManager1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
             this.b_setting});
             this.barManager1.MainMenu = this.barTop;
-            this.barManager1.MaxItemId = 8;
+            this.barManager1.MaxItemId = 9;
             // 
             // barTop
             // 
@@ -118,25 +118,26 @@
             this.barDockControlRight.Manager = this.barManager1;
             this.barDockControlRight.Size = new System.Drawing.Size(0, 528);
             // 
-            // galleryControl1
+            // GalleryControlDX
             // 
-            this.galleryControl1.Controls.Add(this.galleryControlClient1);
-            this.galleryControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GalleryControlDX.Controls.Add(this.galleryControlClient1);
+            this.GalleryControlDX.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // 
             // 
-            this.galleryControl1.Gallery.AllowFilter = false;
-            this.galleryControl1.Gallery.ImageSize = new System.Drawing.Size(100, 100);
-            this.galleryControl1.Gallery.ItemImageLayout = DevExpress.Utils.Drawing.ImageLayoutMode.ZoomInside;
-            this.galleryControl1.Location = new System.Drawing.Point(0, 20);
-            this.galleryControl1.Name = "galleryControl1";
-            this.galleryControl1.Size = new System.Drawing.Size(937, 498);
-            this.galleryControl1.TabIndex = 6;
-            this.galleryControl1.Text = "galleryControl1";
+            this.GalleryControlDX.Gallery.AllowFilter = false;
+            this.GalleryControlDX.Gallery.ImageSize = new System.Drawing.Size(100, 100);
+            this.GalleryControlDX.Gallery.ItemImageLayout = DevExpress.Utils.Drawing.ImageLayoutMode.ZoomInside;
+            this.GalleryControlDX.Gallery.ItemDoubleClick += new DevExpress.XtraBars.Ribbon.GalleryItemClickEventHandler(this.GalleryControlDX_ItemDoubleClick);
+            this.GalleryControlDX.Location = new System.Drawing.Point(0, 20);
+            this.GalleryControlDX.Name = "GalleryControlDX";
+            this.GalleryControlDX.Size = new System.Drawing.Size(937, 498);
+            this.GalleryControlDX.TabIndex = 6;
+            this.GalleryControlDX.Text = "galleryControl1";
             // 
             // galleryControlClient1
             // 
-            this.galleryControlClient1.GalleryControl = this.galleryControl1;
+            this.galleryControlClient1.GalleryControl = this.GalleryControlDX;
             this.galleryControlClient1.Location = new System.Drawing.Point(2, 2);
             this.galleryControlClient1.Size = new System.Drawing.Size(916, 494);
             // 
@@ -171,36 +172,35 @@
             // defaultBarAndDockingController1
             // 
             // 
-            // ZoomPicturBox1
+            // ZoomPictureBox1
             // 
-            this.ZoomPicturBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ZoomPicturBox1.Location = new System.Drawing.Point(0, 20);
-            this.ZoomPicturBox1.Name = "ZoomPicturBox1";
-            this.ZoomPicturBox1.Size = new System.Drawing.Size(937, 498);
-            this.ZoomPicturBox1.TabIndex = 16;
-            this.ZoomPicturBox1.Visible = false;
-            this.ZoomPicturBox1.FillMouseClick += new System.Windows.Forms.MouseEventHandler(this.ZoomPicturBox1_FillMouseClick);
+            this.ZoomPictureBox1.Location = new System.Drawing.Point(0, 20);
+            this.ZoomPictureBox1.Name = "ZoomPictureBox1";
+            this.ZoomPictureBox1.Size = new System.Drawing.Size(121, 83);
+            this.ZoomPictureBox1.TabIndex = 16;
+            this.ZoomPictureBox1.Visible = false;
+            this.ZoomPictureBox1.FillMouseClick += new System.Windows.Forms.MouseEventHandler(this.ZoomPictureBox1_FillMouseClick);
             // 
-            // f_main
+            // F_main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(937, 548);
-            this.Controls.Add(this.ZoomPicturBox1);
-            this.Controls.Add(this.galleryControl1);
+            this.Controls.Add(this.ZoomPictureBox1);
+            this.Controls.Add(this.GalleryControlDX);
             this.Controls.Add(this.p_bot);
             this.Controls.Add(this.barDockControlLeft);
             this.Controls.Add(this.barDockControlRight);
             this.Controls.Add(this.barDockControlBottom);
             this.Controls.Add(this.barDockControlTop);
             this.KeyPreview = true;
-            this.Name = "f_main";
+            this.Name = "F_main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Gallery";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.f_main_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.galleryControl1)).EndInit();
-            this.galleryControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.GalleryControlDX)).EndInit();
+            this.GalleryControlDX.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.p_bot)).EndInit();
             this.p_bot.ResumeLayout(false);
             this.p_bot.PerformLayout();
@@ -218,13 +218,13 @@
         private DevExpress.XtraBars.BarDockControl barDockControlBottom;
         private DevExpress.XtraBars.BarDockControl barDockControlLeft;
         private DevExpress.XtraBars.BarDockControl barDockControlRight;
-        private DevExpress.XtraBars.Ribbon.GalleryControl galleryControl1;
         private DevExpress.XtraBars.Ribbon.GalleryControlClient galleryControlClient1;
         private DevExpress.XtraBars.BarButtonItem b_setting;
         private DevExpress.XtraEditors.PanelControl p_bot;
         private System.Windows.Forms.Label l_count;
         private DevExpress.XtraBars.DefaultBarAndDockingController defaultBarAndDockingController1;
-        private CustomComponents.yZoomPicturBox ZoomPicturBox1;
+        private CustomComponents.yZoomPicturBox ZoomPictureBox1;
         private DevExpress.XtraEditors.ProgressBarControl progressBarLoad;
+        private DevExpress.XtraBars.Ribbon.GalleryControl GalleryControlDX;
     }
 }

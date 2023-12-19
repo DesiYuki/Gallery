@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="Classes\DBControl.cs" />
     <Compile Include="Classes\Global.cs" />
+    <Compile Include="Classes\ImageControl.cs" />
     <Compile Include="Classes\IniFiles.cs" />
     <Compile Include="CustomComponents\yZoomPicturBox.cs">
       <SubType>UserControl</SubType>
@@ -113,7 +114,6 @@
     <Compile Include="Forms\f_setting.Designer.cs">
       <DependentUpon>f_setting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\ImageInfo.cs" />
     <Compile Include="Models\SearchFolders.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

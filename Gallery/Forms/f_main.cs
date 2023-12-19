@@ -15,104 +15,145 @@ using System.Windows.Forms;
 
 namespace Gallery.Forms
 {
-    public partial class f_main : XtraForm
+    public partial class F_main : XtraForm
     {
-        static string[] fileExtension = { ".png", ".jpeg", ".jpg", ".bmp" };
         Thread LoadImageThread;
 
-        public f_main()
+        public F_main()
         {
             InitializeComponent();
-            LoadImageThread = new Thread(LoadImage);
+            ZoomPictureBox1.Dock = DockStyle.Fill;
+            _ = LoadImage();
+        }
+
+        List<string> Images;
+
+        async Task LoadImage()
+        {
+            if (!Directory.Exists("MinImg")) Directory.CreateDirectory("MinImg");
+            Images = await Task.Run(() => SearchImage());
+
+            progressBarLoad.Properties.Maximum = Images.Count;
+            progressBarLoad.Position = 0;
+
+            LoadImageThread = new Thread(LoadIMG);
             LoadImageThread.Start();
         }
 
-        void LoadImage()
+        /// <summary>
+        /// Получает список всех изображений
+        /// </summary>
+        List<string> SearchImage()
         {
-            List<string> newImages = searchImage();
+            List<string> Files = new List<string>();
 
-            progressBarLoad.Invoke(new Action(() => {
-                progressBarLoad.Properties.Maximum = newImages.Count;
-                progressBarLoad.Position = 0;
-            }));
+            foreach (SearchFolders folder in Global.DBControl.SelectAll_SearchFolders())
+                if (!Directory.Exists(folder.Path))
+                    Global.DBControl.Delete(folder);
+                else
+                    foreach (string file in Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories))
+                        if (ImageControl.fileExtension.Contains(Path.GetExtension(file).ToLower()))//добавить исключение папку с миниатюрами
+                        {
+                            Files.Add(file);
 
-            if (!Directory.Exists("MinImg")) Directory.CreateDirectory("MinImg");
+                            string FoldersName = Directory.GetParent(file).Name;
+                            GalleryItemGroup targetGroup = GalleryControlDX.Gallery.Groups.Cast<GalleryItemGroup>().FirstOrDefault(group => group.Caption == FoldersName);
+                            if (targetGroup == null)
+                            {
+                                GalleryItemGroup newGroup = new GalleryItemGroup { Caption = FoldersName };
+                                GalleryControlDX.Invoke(new Action(() => {
+                                    GalleryControlDX.Gallery.Groups.Add(newGroup);
+                                }));
+                            }
+                        }
+            return Files;
+        }
 
-            int i = 1;
-            foreach (string img in newImages)
+        void LoadIMG()
+        {
+            for (int i = 0; i < Images.Count; i++)
             {
-                List<ImageInfo> SearchImage = Global.DBControl.selectImageInfoByPath(img);
-                if (SearchImage.Count == 0)
+                string img = Images[i];
+                string pathMin = "MinImg" + img.Remove(0, 2);
+
+                if (!File.Exists(pathMin)) // проверка миниатюры
                 {
-                    SearchImage.Clear();
-                    SearchImage.Add(AddNewImageDB(img));
+                    if (!Directory.Exists(Directory.GetParent(pathMin).FullName)) Directory.CreateDirectory(Directory.GetParent(pathMin).FullName);
+                    ImageControl.ResizeImage(img, 100, pathMin);
+                    progressBarLoad.Invoke(new Action(() =>
+                    {
+                        progressBarLoad.Position = i;
+                    }));
+                    l_count.Invoke(new Action(() =>
+                    {
+                        l_count.Text = i + 1 + "/" + progressBarLoad.Properties.Maximum.ToString();
+                    }));
                 }
 
-                GalleryItem galleryItem = new GalleryItem();
-                galleryItem.ItemClick += Gallery_ItemClick;
-                galleryItem.Tag = img;
-
-                if (!File.Exists(SearchImage[0].MinImgPath))
+                GalleryItem galleryItem = new GalleryItem
                 {
-                    ResizeImage(img, 100, SearchImage[0].MinImgPath);
-                }
-                galleryItem.ImageOptions.Image = GetCopyImage(SearchImage[0].MinImgPath);
+                    Tag = img
+                };
+                galleryItem.ImageOptions.Image = ImageControl.GetCopyImage(pathMin);
 
                 string FoldersName = Directory.GetParent(img).Name;
-                GalleryItemGroup targetGroup = galleryControl1.Gallery.Groups.Cast<GalleryItemGroup>().FirstOrDefault(group => group.Caption == FoldersName);
+                GalleryItemGroup targetGroup = GalleryControlDX.Gallery.Groups.Cast<GalleryItemGroup>().FirstOrDefault(group => group.Caption == FoldersName);
 
-                galleryControl1.Invoke(new Action(() => {
+                GalleryControlDX.Invoke(new Action(() => {
                     targetGroup.Items.Add(galleryItem);
                 }));
-                progressBarLoad.Invoke(new Action(() => {
-                    progressBarLoad.Position = i;
-                    progressBarLoad.Update();
-                }));
-                l_count.Invoke(new Action(() => {
-                    l_count.Text = i + "/" + newImages.Count.ToString();
-                }));
-                i++;
+                if (i % (int)(Images.Count * 0.10) == 0)
+                {
+                    GalleryControlDX.Invoke(new Action(() =>
+                    {
+                        GalleryControlDX.Update();
+                    }));
+                    progressBarLoad.Invoke(new Action(() =>
+                    {
+                        progressBarLoad.Position = i;
+                        progressBarLoad.Update();
+                    }));
+                    l_count.Invoke(new Action(() =>
+                    {
+                        l_count.Text = i + 1 + "/" + progressBarLoad.Properties.Maximum.ToString();
+                    }));
+                }
             }
+            l_count.Invoke(new Action(() =>
+            {
+                l_count.Text = "Изображений: " + Images.Count;
+            }));
             progressBarLoad.Invoke(new Action(() =>
             {
                 progressBarLoad.Visible = false;
             }));
         }
 
-        private void Gallery_ItemClick(object sender, GalleryItemClickEventArgs e)
-        {
-            string img = e.Item.Tag.ToString();
-            ZoomPicturBox1.setIMG(img);
-            ZoomPicturBox1.Visible = true;
-            SelectImage = e.Item;
-            int index = e.Item.GalleryGroup.Items.IndexOf(e.Item);
-        }
-
         GalleryItem SelectImage;
 
-        private void ZoomPicturBox1_FillMouseClick(object sender, MouseEventArgs e)
+        private void ZoomPictureBox1_FillMouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-                ZoomPicturBox1.Visible = false;
+                ZoomPictureBox1.Visible = false;
                 SelectImage = null;
             }
-            else if (e.Location.X <= ZoomPicturBox1.Width / 10 || e.Location.X >= ZoomPicturBox1.Width - ZoomPicturBox1.Width / 10)
+            else if (e.Location.X <= ZoomPictureBox1.Width / 8 || e.Location.X >= ZoomPictureBox1.Width - ZoomPictureBox1.Width / 8)
             {
                 int imageIndex = SelectImage.GalleryGroup.Items.IndexOf(SelectImage);
-                int groupIndex = galleryControl1.Gallery.Groups.IndexOf(SelectImage.GalleryGroup);
+                int groupIndex = GalleryControlDX.Gallery.Groups.IndexOf(SelectImage.GalleryGroup);
 
-                if (e.Location.X <= ZoomPicturBox1.Width / 10)
+                if (e.Location.X <= ZoomPictureBox1.Width / 8)
                 {
                     if (imageIndex == 0)
                     {
                         while (true)
                         {
                             if (groupIndex == 0)
-                                groupIndex = galleryControl1.Gallery.Groups.Count - 1;
+                                groupIndex = GalleryControlDX.Gallery.Groups.Count - 1;
                             else
                                 groupIndex--; 
-                            if(galleryControl1.Gallery.Groups[groupIndex].Items.Count != 0)
+                            if(GalleryControlDX.Gallery.Groups[groupIndex].Items.Count != 0)
                                 break;
                         }
                         imageIndex = SelectImage.GalleryGroup.Items.Count - 1;
@@ -121,18 +162,18 @@ namespace Gallery.Forms
                         imageIndex--;
                     
                 }
-                else if (e.Location.X >= ZoomPicturBox1.Width - ZoomPicturBox1.Width / 10)
+                else if (e.Location.X >= ZoomPictureBox1.Width - ZoomPictureBox1.Width / 8)
                 {
                     if (imageIndex == SelectImage.GalleryGroup.Items.Count - 1)
                     {
                         imageIndex = 0;
                         while (true)
                         {
-                            if (groupIndex == galleryControl1.Gallery.Groups.Count - 1)
+                            if (groupIndex == GalleryControlDX.Gallery.Groups.Count - 1)
                                 groupIndex = 0;
                             else
                                 groupIndex++;
-                            if (galleryControl1.Gallery.Groups[groupIndex].Items.Count != 0)
+                            if (GalleryControlDX.Gallery.Groups[groupIndex].Items.Count != 0)
                                 break;
                         }
                     }
@@ -140,81 +181,8 @@ namespace Gallery.Forms
                         imageIndex++;
                 }
 
-                SelectImage = galleryControl1.Gallery.Groups[groupIndex].Items[imageIndex];
-                ZoomPicturBox1.setIMG(SelectImage.Tag.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Сохраняет данные о изображение в бд
-        /// </summary>
-        ImageInfo AddNewImageDB(string pathImg)
-        {
-            int LastName = Convert.ToInt32(Global.GetIniParameter("ImageMin", "LastName", "0"));
-            LastName++;
-
-            string MinImgPath = "MinImg\\" + LastName + ".bmp";
-            Image ImageMin = ResizeImage(pathImg, 100, MinImgPath);
-
-            ImageInfo NewImg = new ImageInfo { Path = pathImg, MinImgPath = MinImgPath };
-            Global.DBControl.Insert(NewImg);
-
-            Global.SetIniParameter("ImageMin", "LastName", LastName.ToString());
-            return NewImg;
-        }
-
-        /// <summary>
-        /// Получает список всех изображений
-        /// </summary>
-        List<string> searchImage()
-        {
-            List<string> Files = new List<string>();
-
-            foreach (SearchFolders folder in Global.DBControl.selectAll_SearchFolders())
-                if (!Directory.Exists(folder.Path))
-                    Global.DBControl.Delete(folder);
-                else
-                    foreach (string file in Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories))
-                        if (fileExtension.Contains(Path.GetExtension(file).ToLower()))
-                        {
-                            Files.Add(file);
-                            // создание всех групп
-                            string FoldersName = Directory.GetParent(file).Name;
-                            GalleryItemGroup targetGroup = galleryControl1.Gallery.Groups.Cast<GalleryItemGroup>().FirstOrDefault(group => group.Caption == FoldersName);
-                            if (targetGroup == null)
-                            {
-                                GalleryItemGroup newGroup = new GalleryItemGroup { Caption = FoldersName };
-                                galleryControl1.Invoke(new Action(() => {
-                                    galleryControl1.Gallery.Groups.Add(newGroup);
-                                }));
-                            }
-                            //
-                        }
-            return Files;
-        }
-
-        /// <summary>
-        /// Создает миниатюру изображения
-        /// </summary>
-        Image ResizeImage(string path, int minSize, string nameSave)
-        {
-            using (Image im = Image.FromFile(path))
-            {
-                Image resizedImage = im.GetThumbnailImage(minSize, (minSize * im.Height) / im.Width, null, IntPtr.Zero);
-                resizedImage.Save(nameSave);
-                return resizedImage;
-            }
-        }
-
-        /// <summary>
-        /// возвращает копию изображения
-        /// </summary>
-        Image GetCopyImage(string path)
-        {
-            using (Image im = Image.FromFile(path))
-            {
-                Bitmap bm = new Bitmap(im);
-                return bm;
+                SelectImage = GalleryControlDX.Gallery.Groups[groupIndex].Items[imageIndex];
+                ZoomPictureBox1.setIMG(SelectImage.Tag.ToString());
             }
         }
 
@@ -226,6 +194,14 @@ namespace Gallery.Forms
         private void f_main_FormClosing(object sender, FormClosingEventArgs e)
         {
             LoadImageThread.Abort();
+        }
+
+        private void GalleryControlDX_ItemDoubleClick(object sender, GalleryItemClickEventArgs e)
+        {
+            string img = e.Item.Tag.ToString();
+            ZoomPictureBox1.setIMG(img);
+            ZoomPictureBox1.Visible = true;
+            SelectImage = e.Item;
         }
     }
 }

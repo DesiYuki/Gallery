@@ -16,7 +16,7 @@ namespace Gallery
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new f_main());
+            Application.Run(new F_main());
         }
     }
 }
